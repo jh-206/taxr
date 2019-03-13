@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This vignette describes the steps of using the `taxr` package to conduct a ratio study analysis, using a data set of 2018 sales from King County, Washington.
+This vignette describes the steps of using the `taxr` package to conduct a ratio study analysis, using a data set of 2018 sales from King County, Washington. This package and vignette makes use of the `tidyverse`.
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -17,12 +17,12 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-library(taxr)
+library(taxr); library(tidyverse)
 ```
 
 ## Background
 
-Ratio studies are a standard method of analyzing tax assessment accuracy. The main unit of analysis is the assessed to sale price ratio (ASR) for properties that sold in a relevant time period.
+Ratio studies are a standard method of analyzing tax assessment accuracy. The main unit of analysis is the assessed to sale price ratio (ASR) for properties that sold in a relevant time period. For more on ratio studies, see https://www.iaao.org/media/standards/Standard_on_Ratio_Studies.pdf.
 
 ## King County Tax Assessment data
 
@@ -42,9 +42,52 @@ knitr::kable(head(ex_tax_data))
 
 ## Data Standardization
 
-The `taxr::standardize` is used to ensure naming and type standardization. The arguments of the function specify column names that are expected in real estate data. You give a character value indicating the function
+The `taxr::standardize` is used to ensure naming and type standardization. The arguments of the function specify column names that are expected in real estate data. You give a character value indicating the column name that is to be renamed. A logical argument `calc_asr` will calculate $ASR = \frac{assessed}{saleprice}$ if no ASR column in provided.
 
 ```{r standardize}
-df <- standardize()
+df <- ex_tax_data %>% 
+  standardize(
+    uid = 'PIN',
+    assessed = 'ApprVal',
+    saleprice = 'SalePrice',
+    saledate = 'DocumentDate',
+    living_area = 'SqFtTotLiving',
+    yearbuilt = 'YrBuilt'
+  )
 ```
+
+This package does not have specific functionality for all of these fields, for example `yearbuilt`. However, a comprehensive ratio study would likely include some analysis of these fields. It is therefore good practice to have a standardized set of column names to work with, so user built code will be useful across projects.
+
+## Outlier Detection
+
+To identify outliers, the `isOutlier` function supports two methods, an inner quartile range (IRQ) method and a percentile method. The IQR method by default identifes outliers that are more than 3 times the IQR below the first quartile or above the third. This threshold can be changed with the function parameter `val`
+
+```{r iqr1}
+sum(isOutlier(df$asr, method = 'iqr', val = 3))
+```
+
+```{r iqr2}
+sum(isOutlier(df$asr, method = 'iqr', val = 1.5))
+```
+
+The percentile method identifies the inner percentage of values, by default the inner 99.5%. This can be changed with the `inner_perc` argument
+
+```{r perc1}
+sum(isOutlier(df$asr, method = 'ptile', inner_perc = .995))
+```
+
+```{r perc2}
+sum(isOutlier(df$asr, method = 'ptile', inner_perc = .95))
+```
+
+For the rest of the vignette, the default outlier method of 3 times the IQR will be used.
+
+```{r iqr3}
+df <- df %>% 
+  filter(!isOutlier(asr))
+```
+
+## Standard Ratio Study Metrics
+
+### Coefficient of Dispersion (COD)
 

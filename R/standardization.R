@@ -16,7 +16,7 @@
 #' @return Dataframe with renamed columns
 #'
 #' @export
-standardize <- function(df, assessed, saleprice = NULL, uid = NULL, saledate = NULL, living_area = NULL, lot_area = NULL, asr = NULL, x = NULL, y = NULL, calc_asr = T) {
+standardize <- function(df, assessed, saleprice = NULL, uid = NULL, saledate = NULL, living_area = NULL, lot_area = NULL, yearbuilt = NULL, asr = NULL, x = NULL, y = NULL, calc_asr = T) {
   stopifnot('data.frame' %in% class(df))
 
   # Extract user entered params
@@ -49,7 +49,7 @@ standardize <- function(df, assessed, saleprice = NULL, uid = NULL, saledate = N
 #'
 #' @param df Dataframe output of \code{standardize}
 typeStandardization <- function(df) {
-  num_cols <- c('assessed', 'saleprice', 'x', 'y', 'asr', 'living_area', 'lot_area')
+  num_cols <- c('assessed', 'saleprice', 'x', 'y', 'asr', 'living_area', 'lot_area', 'yearbuilt')
   num_cols <- num_cols[num_cols %in% names(df)]
 
   df <- df %>%
