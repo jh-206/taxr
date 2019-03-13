@@ -1,0 +1,23 @@
+Package: taxr
+Type: Package
+Title: Tax Assessment Ratio Analysis
+Version: 0.0.0.9000
+Authors@R: person("Jonathon", "Hirschi", email = "jhirschi206@gmail.com",
+  role = c("aut", "cre"))
+Maintainer: Jonathon Hirschi <jhirschi206@gmail.com>
+Description: Analyzes tax assessment accuracy using the ratio of
+  assessed value to sale price, consistent with practices described in
+  IAAO Standard of Ratio Studies. Set of functions to standardize inputs
+  and generate basic report tables.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+  dplyr,
+  lubridate,
+  stringr
+RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

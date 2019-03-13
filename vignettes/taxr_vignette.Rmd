@@ -1,0 +1,50 @@
+---
+title: "Vignette Title"
+author: "Greenfield Advisors - Jonathon Hirschi"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette describes the steps of using the `taxr` package to conduct a ratio study analysis, using a data set of 2018 sales from King County, Washington.
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(taxr)
+```
+
+## Background
+
+Ratio studies are a standard method of analyzing tax assessment accuracy. The main unit of analysis is the assessed to sale price ratio (ASR) for properties that sold in a relevant time period.
+
+## King County Tax Assessment data
+
+```{r data}
+data("ex_tax_data")
+
+dim(ex_tax_data)
+```
+
+The data is a random sample of 1,000 sales from King County, Washington. The raw files are publically provided by the county assessor. Sales and assessment data files were joined by parcel identification number (PIN). The raw data can be found at the following URL:
+
+https://info.kingcounty.gov/assessor/DataDownload/default.aspx
+
+```{r view_dat, echo=F}
+knitr::kable(head(ex_tax_data))
+```
+
+## Data Standardization
+
+The `taxr::standardize` is used to ensure naming and type standardization. The arguments of the function specify column names that are expected in real estate data. You give a character value indicating the function
+
+```{r standardize}
+df <- standardize()
+```
+
